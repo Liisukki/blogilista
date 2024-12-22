@@ -2,18 +2,10 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
+const Blog = require('./models/blog')
 
-// Ota salasana komentoriviltä (argv[2])
-const password = process.argv[2];
-
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
-});
-
-const Blog = mongoose.model("Blog", blogSchema);
+require('dotenv').config()
+const password = process.env.MONGODB_PASSWORD
 
 const mongoUrl = `mongodb+srv://liisukotilainen:${password}@blogilista.2izhe.mongodb.net/?retryWrites=true&w=majority&appName=blogilista`;
 mongoose.connect(mongoUrl);
