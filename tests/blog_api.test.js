@@ -53,7 +53,27 @@ describe("GET /api/blogs", () => {
       assert.strictEqual(blog._id, undefined); // Eihän _id ole olemassa
     });
   });
+
+  test("if likes is missing, it defaults to 0", async () => {
+    const newBlog = {
+      title: "Default Likes Test",
+      author: "Test Author",
+      url: "http://example.com",
+    };
+
+    const response = await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const savedBlog = response.body;
+
+    // Varmista, että likes-kenttä on oletuksena 0
+    assert.strictEqual(savedBlog.likes, 0);
+  });
 });
+
 describe("POST /api/blogs", () => {
   test("a valid blog can be added", async () => {
     const newBlog = {

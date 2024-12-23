@@ -9,17 +9,18 @@ blogRouter.get("/", async (request, response) => {
 
 // Lisää uusi blogi
 blogRouter.post("/", async (request, response) => {
-  const { title, author, url, likes } = request.body;
-
-  const blog = new Blog({
-    title,
-    author,
-    url,
-    likes: likes || 0,
+    const { title, author, url, likes = 0 } = request.body;
+  
+    const blog = new Blog({
+      title,
+      author,
+      url,
+      likes,
+    });
+  
+    const savedBlog = await blog.save();
+    response.status(201).json(savedBlog);
   });
-
-  const savedBlog = await blog.save();
-  response.status(201).json(savedBlog);
-});
+  
 
 module.exports = blogRouter;
