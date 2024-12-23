@@ -55,7 +55,7 @@ const blogs = [
 ];
 
 describe("total likes", () => {
-  test("when list has no blogs, likes are zero", () => {
+  test("of an empty list is zero", () => {
     const result = listHelper.totalLikes([]);
     assert.strictEqual(result, 0);
   });
@@ -66,8 +66,8 @@ describe("total likes", () => {
     assert.strictEqual(result, 7);
   });
 
-  test("when list has multiple blogs, calculates the total likes correctly", () => {
+  test("of a bigger list is calculated right", () => {
     const result = listHelper.totalLikes(blogs);
-    assert.strictEqual(result, 36); // 7 + 5 + 12 + 10 + 0 + 2
+    assert.strictEqual(result, 36);
   });
 });
