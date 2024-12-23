@@ -44,4 +44,14 @@ describe('GET /api/blogs', () => {
     const response = await api.get('/api/blogs');
     assert.strictEqual(response.body.length, initialBlogs.length);
   });
+
+  test('blogs have an id field instead of _id', async () => {
+    const response = await api.get('/api/blogs');
+  
+    response.body.forEach((blog) => {
+      assert.strictEqual(blog.id !== undefined, true); // Onhan id olemassa
+      assert.strictEqual(blog._id, undefined);         // Eihän _id ole olemassa
+    });
+  });
+  
 });
