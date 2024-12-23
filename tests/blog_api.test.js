@@ -110,3 +110,33 @@ describe("POST /api/blogs", () => {
     assert.strictEqual(addedBlog.likes, newBlog.likes);
   });
 });
+
+describe("DELETE /api/blogs/:id", () => {
+  test("succeeds with status code 204 if id is valid", async () => {
+    const blogsAtStart = await Blog.find({});
+    const blogToDelete = blogsAtStart[0];
+
+    // Poistetaan blogi
+    await api.delete(`/api/blogs/${blogToDelete._id}`).expect(204);
+
+    // Tarkistetaan, että blogi on poistettu tietokannasta
+    const blogsAtEnd = await Blog.find({});
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1);
+
+    // Varmistetaan, ettei poistettua blogia löydy tietokannasta
+    const titles = blogsAtEnd.map((b) => b.title);
+    assert.ok(!titles.includes(blogToDelete.title));
+  });
+
+  test("fails with status code 404 if blog does not exist", async () => {
+    const nonExistingId = new mongoose.Types.ObjectId();
+
+    // Poistetaan blogi, joka ei ole olemassa
+    await api.delete(`/api/blogs/${nonExistingId}`).expect(404);
+  });
+
+  test("fails with status code 400 if id is invalid", async () => {
+    // Poistetaan blogi virheellisellä ID:llä
+    await api.delete("/api/blogs/invalid-id").expect(400);
+  });
+});
