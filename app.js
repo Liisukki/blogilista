@@ -1,11 +1,11 @@
-const config = require("./utils/config"); // Lataa ympäristömuuttujat
-const express = require("express"); // Lataa Express
-const app = express(); // Luo Express-sovellus
+const config = require("./utils/config"); 
+const express = require("express"); 
+const app = express(); 
 const cors = require("cors"); // Lataa CORS
-const blogsRouter = require("./controllers/blogs"); // Lataa reitit
-const middleware = require("./utils/middleware"); // Lataa middlewaret
-const logger = require("./utils/logger"); // Lataa logger
-const mongoose = require("mongoose"); // Lataa mongoose (MongoDB:n käyttö)
+const blogsRouter = require("./controllers/blogs"); 
+const middleware = require("./utils/middleware"); 
+const logger = require("./utils/logger"); 
+const mongoose = require("mongoose"); 
 
 mongoose.set("strictQuery", false); // Aseta Mongoose-virheenkäsittely
 
@@ -14,22 +14,22 @@ logger.info("connecting to", config.MONGODB_URI);
 mongoose
   .connect(config.MONGODB_URI)
   .then(() => {
-    logger.info("connected to MongoDB"); // Yhdistetty MongoDB:hen
+    logger.info("connected to MongoDB"); 
   })
   .catch((error) => {
-    logger.error("error connection to MongoDB:", error.message); // Virhe yhdistettäessä
+    logger.error("error connection to MongoDB:", error.message);
   });
 
 // Middlewaret
-app.use(cors()); // Salli CORS
-app.use(express.json()); // Parsitaan JSON-dataa pyynnöistä
-app.use(middleware.requestLogger); // Lokittaa saapuvat pyynnöt
+app.use(cors());
+app.use(express.json()); 
+app.use(middleware.requestLogger); 
 
 // Reitit
-app.use("/api/blogs", blogsRouter); // Käytä blogsRouteria /api/blogs-pyynnöissä
+app.use("/api/blogs", blogsRouter); 
 
 // Virheenkäsittely
-app.use(middleware.unknownEndpoint); // Tuntemattomat päätepisteet
-app.use(middleware.errorHandler); // Virheenkäsittely
+app.use(middleware.unknownEndpoint); 
+app.use(middleware.errorHandler); 
 
-module.exports = app; // Vie app.js, jotta se voidaan käyttää index.js-tiedostossa
+module.exports = app;
