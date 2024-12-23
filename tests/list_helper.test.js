@@ -71,3 +71,29 @@ describe("total likes", () => {
     assert.strictEqual(result, 36);
   });
 });
+
+describe("favorite blog", () => {
+  test("when list has no blogs, returns null", () => {
+    const result = listHelper.favoriteBlog([]);
+    assert.strictEqual(result, null);
+  });
+
+  test("when list has one blog, returns that blog", () => {
+    const listWithOneBlog = [blogs[0]];
+    const result = listHelper.favoriteBlog(listWithOneBlog);
+    assert.deepStrictEqual(result, {
+      title: "React patterns",
+      author: "Michael Chan",
+      likes: 7,
+    });
+  });
+
+  test("when list has multiple blogs, returns the blog with most likes", () => {
+    const result = listHelper.favoriteBlog(blogs);
+    assert.deepStrictEqual(result, {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12,
+    });
+  });
+});
