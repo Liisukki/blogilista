@@ -11,3 +11,12 @@ Content-Type: application/json
   "url": "http://example2.com",
   "likes": 10
 }
+### Käyttäjän lisääminen
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "Saukko",
+  "name": "Anne Henriikka",
+  "password": "salainen"
+}
