@@ -1,9 +1,12 @@
-const { test, describe, before, after } = require("node:test");
+const { test, describe, before, beforeEach, after } = require("node:test");
 const assert = require("node:assert");
 const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../app"); // Express-sovellus
+const bcrypt = require("bcryptjs");
+const helper = require("../utils/list_helper");
 
+const User = require("../models/user");
 const Blog = require("../models/blog");
 const api = supertest(app);
 
@@ -138,5 +141,38 @@ describe("DELETE /api/blogs/:id", () => {
   test("fails with status code 400 if id is invalid", async () => {
     // Poistetaan blogi virheellisellä ID:llä
     await api.delete("/api/blogs/invalid-id").expect(400);
+  });
+});
+
+describe("when there is initially one user at db", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash("sekret", 10);
+    const user = new User({ username: "root", passwordHash });
+
+    await user.save();
+  });
+
+  test("creation succeeds with a fresh username", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "Nokipallero",
+      name: "Laura Sinikka",
+      password: "salainen",
+    };
+
+    await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1);
+
+    const usernames = usersAtEnd.map((u) => u.username);
+    assert(usernames.includes(newUser.username));
   });
 });
