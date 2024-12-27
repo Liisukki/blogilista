@@ -1,16 +1,19 @@
 const blogsRouter = require("express").Router();
 const { response } = require("../app");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 // Hae kaikki blogit
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({}); // Hae kaikki blogit
+  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 }); // Hae kaikki blogit
   response.json(blogs);
 });
 
 // Lisää uusi blogi
 blogsRouter.post("/", async (request, response) => {
   const body = request.body;
+
+  const user = await User.findById(body.userId);
 
   // Check for required fields
   if (!body.title || !body.url) {
@@ -23,17 +26,18 @@ blogsRouter.post("/", async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0, // Jos likes puuttuu, oletusarvo 0
+    user: user._id,
   });
 
   try {
     const savedBlog = await blog.save();
+    user.blogs = user.blogs.concat(savedBlog._id);
+    await user.save();
+
     response.status(201).json(savedBlog); // Return the saved blog
   } catch (error) {
     response.status(500).json({ error: "Failed to save the blog" });
   }
-
-  // Tallennetaan blogi tietokantaan
-  const savedBlog = await blog.save();
 });
 
 blogsRouter.get("/:id", async (request, response) => {

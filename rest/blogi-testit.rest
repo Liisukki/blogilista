@@ -6,10 +6,11 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Second Blog",
-  "author": "Another Name",
+  "title": "Seconds Blogs",
+  "author": "Anothers Names",
   "url": "http://example2.com",
-  "likes": 10
+  "likes": 13,
+  "userId": "676effd78ebaf21382e1bd14"
 }
 ### Käyttäjän lisääminen
 POST http://localhost:3003/api/users
