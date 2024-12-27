@@ -1,40 +1,71 @@
-const blogRouter = require("express").Router();
+const blogsRouter = require("express").Router();
+const { response } = require("../app");
 const Blog = require("../models/blog");
 
 // Hae kaikki blogit
-blogRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({});
+blogsRouter.get("/", async (request, response) => {
+  const blogs = await Blog.find({}); // Hae kaikki blogit
   response.json(blogs);
 });
 
 // Lisää uusi blogi
-blogRouter.post("/", async (request, response) => {
-  const { title, author, url, likes = 0 } = request.body;
+blogsRouter.post("/", async (request, response) => {
+  const body = request.body;
 
+  // Check for required fields
+  if (!body.title || !body.url) {
+    return response.status(400).json({ error: "Title and URL are required" });
+  }
+
+  // Luodaan uusi blogi
   const blog = new Blog({
-    title,
-    author,
-    url,
-    likes,
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes || 0, // Jos likes puuttuu, oletusarvo 0
   });
 
+  try {
+    const savedBlog = await blog.save();
+    response.status(201).json(savedBlog); // Return the saved blog
+  } catch (error) {
+    response.status(500).json({ error: "Failed to save the blog" });
+  }
+
+  // Tallennetaan blogi tietokantaan
   const savedBlog = await blog.save();
-  response.status(201).json(savedBlog);
 });
 
-// Poista blogi
-blogRouter.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const deletedBlog = await Blog.findByIdAndDelete(id); // Käytetään findByIdAndDelete, joka poistaa blogin ja palauttaa sen
-    if (!deletedBlog) {
-      return res.status(404).json({ error: "Blog not found" });
-    }
-    res.status(204).end(); // Poistaminen onnistui
-  } catch (error) {
-    res.status(400).json({ error: "Malformatted ID" }); // Jos ID on virheellinen
+blogsRouter.get("/:id", async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+  if (blog) {
+    response.json(blog);
+  } else {
+    response.status(404).end();
   }
 });
 
-module.exports = blogRouter;
+// Poista blogi
+blogsRouter.delete("/:id", async (request, response) => {
+  await Blog.findByIdAndDelete(request.params.id);
+  response.status(204).end();
+});
+
+// Lisää tarvittaessa PUT reitti blogin päivitykselle
+blogsRouter.put("/:id", async (request, response) => {
+  const body = request.body;
+
+  const blog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+  };
+
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+    new: true,
+  });
+  response.json(updatedBlog);
+});
+
+module.exports = blogsRouter;

@@ -3,10 +3,11 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const blogsRouter = require("./controllers/blogs");
+const usersRouter = require("./controllers/users");
+
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
 const mongoose = require("mongoose");
-const usersRouter = require("./controllers/users");
 
 mongoose.set("strictQuery", false); // Mongoose-virheenkäsittely
 
