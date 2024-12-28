@@ -54,12 +54,24 @@ describe("when there is initially some blogs saved", () => {
   });
 
   describe("addition of a new blog", () => {
+    beforeEach(async () => {
+      await User.deleteMany({});
+      const newUser = {
+        username: "testuser",
+        name: "Test User",
+        password: "password123",
+      };
+      const savedUser = await api.post("/api/users").send(newUser).expect(201);
+      this.userId = savedUser.body.id; // Tallenna käyttäjän ID testien käyttöön
+    });
+
     test("a valid blog can be added", async () => {
       const newBlog = {
         title: "New Blog Post",
         author: "Test Author",
         url: "http://example.com/new-blog",
         likes: 10,
+        userId: this.userId, // Lisää käyttäjän ID pyyntöön
       };
 
       await api
@@ -72,12 +84,12 @@ describe("when there is initially some blogs saved", () => {
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1);
 
       const titles = blogsAtEnd.map((b) => b.title);
-      assert(titles.includes("New Blog Post")); // Tarkistetaan, että uusi blogi on lisätty
+      assert(titles.includes("New Blog Post"));
     });
 
     test("fails with status code 400 if data invalid", async () => {
       const newBlog = {
-        title: "Incomplete Blog", // Missing title and url
+        title: "Incomplete Blog",
       };
 
       await api.post("/api/blogs").send(newBlog).expect(400);
@@ -108,6 +120,17 @@ describe("when there is initially some blogs saved", () => {
 });
 
 describe("Blogs API", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const newUser = {
+      username: "testuser",
+      name: "Test User",
+      password: "password123",
+    };
+    const savedUser = await api.post("/api/users").send(newUser).expect(201);
+    this.userId = savedUser.body.id;
+  });
+
   test("blogs have an id field instead of _id", async () => {
     const response = await api.get("/api/blogs");
     response.body.forEach((blog) => {
@@ -121,6 +144,7 @@ describe("Blogs API", () => {
       title: "Default Likes Test",
       author: "Test Author",
       url: "http://example.com",
+      userId: this.userId, // Lisää käyttäjän ID
     };
 
     const response = await api

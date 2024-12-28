@@ -10,7 +10,7 @@ Content-Type: application/json
   "author": "Anothers Names",
   "url": "http://example2.com",
   "likes": 13,
-  "userId": "676effd78ebaf21382e1bd14"
+  "userId": "676f923ef034c33300079810"
 }
 ### Käyttäjän lisääminen
 POST http://localhost:3003/api/users

@@ -1,5 +1,4 @@
 const blogsRouter = require("express").Router();
-const { response } = require("../app");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
@@ -13,7 +12,16 @@ blogsRouter.get("/", async (request, response) => {
 blogsRouter.post("/", async (request, response) => {
   const body = request.body;
 
+  // Tarkista, että käyttäjä löytyy
+  if (!body.userId) {
+    return response.status(400).json({ error: "User ID is required" });
+  }
+
   const user = await User.findById(body.userId);
+
+  if (!user) {
+    return response.status(400).json({ error: "User not found" });
+  }
 
   // Check for required fields
   if (!body.title || !body.url) {
@@ -31,10 +39,12 @@ blogsRouter.post("/", async (request, response) => {
 
   try {
     const savedBlog = await blog.save();
+
+    // Lisää blogi käyttäjän listaan
     user.blogs = user.blogs.concat(savedBlog._id);
     await user.save();
 
-    response.status(201).json(savedBlog); // Return the saved blog
+    response.status(201).json(savedBlog); 
   } catch (error) {
     response.status(500).json({ error: "Failed to save the blog" });
   }
