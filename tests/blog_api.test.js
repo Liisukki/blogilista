@@ -216,9 +216,54 @@ describe("when there is initially one user at db", () => {
   });
 });
 
-after(async () => {
-  await User.deleteMany({});
-  await mongoose.connection.close();
+describe("adding a new blog with a user", () => {
+  beforeEach(async () => {
+    // Tyhjennetään tietokanta ja luodaan käyttäjä
+    await User.deleteMany({});
+    await Blog.deleteMany({});
+
+    const newUser = {
+      username: "testuser",
+      name: "Test User",
+      password: "password123",
+    };
+
+    const savedUser = await api.post("/api/users").send(newUser).expect(201);
+    this.userId = savedUser.body.id; // Tallenna käyttäjän ID
+  });
+
+  test("a blog can be added with a valid user", async () => {
+    const newBlog = {
+      title: "User-Assigned Blog",
+      author: "User Author",
+      url: "http://example.com/user-blog",
+      likes: 5,
+      userId: this.userId, // Lisää käyttäjän ID
+    };
+
+    const response = await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const savedBlog = response.body;
+
+    // Tarkista, että blogi tallentuu tietokantaan ja käyttäjä on määritetty
+    assert.strictEqual(savedBlog.title, newBlog.title);
+    assert.strictEqual(savedBlog.author, newBlog.author);
+    assert.strictEqual(savedBlog.url, newBlog.url);
+    assert.strictEqual(savedBlog.likes, newBlog.likes);
+    assert.strictEqual(savedBlog.user, this.userId);
+
+    // Tarkista tietokannasta
+    const blogsAtEnd = await helper.blogsInDb();
+    assert.strictEqual(blogsAtEnd.length, 1);
+
+    const createdBlog = blogsAtEnd[0];
+    assert.strictEqual(createdBlog.title, "User-Assigned Blog");
+    assert.strictEqual(createdBlog.user.toString(), this.userId);
+  });
 });
 
 // Tykkäyksien testaus
