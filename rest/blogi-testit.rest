@@ -7,13 +7,15 @@ GET http://localhost:3003/api/users
 ### Lisää uusi blogi
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNhdWtrbyIsImlkIjoiNjc2ZmI5MDFmNGMwNWY1NGZiYzlhMGM1IiwiaWF0IjoxNzM1NDcxNjY2fQ.lJzjBlQk3kQMDp-zCqut72IGWfrTy9X2J-e6JJyNRSs
+
 
 {
   "title": "Seconds Blogs",
   "author": "Anothers Names",
   "url": "http://example2.com",
   "likes": 13,
-  "userId": "676f923ef034c33300079810"
+  "userId": "676fb901f4c05f54fbc9a0c5"
 }
 ### Käyttäjän lisääminen
 POST http://localhost:3003/api/users
@@ -22,5 +24,15 @@ Content-Type: application/json
 {
   "username": "Saukko",
   "name": "Anne Henriikka",
+  "password": "salainen"
+}
+
+### Kirjautuminen
+POST http://localhost:3003/api/login
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNhdWtrbyIsImlkIjoiNjc2ZmI5MDFmNGMwNWY1NGZiYzlhMGM1IiwiaWF0IjoxNzM1NDcxNjY2fQ.lJzjBlQk3kQMDp-zCqut72IGWfrTy9X2J-e6JJyNRSs
+
+{
+  "username": "Saukko",
   "password": "salainen"
 }
