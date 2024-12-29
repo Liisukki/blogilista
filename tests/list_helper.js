@@ -52,6 +52,7 @@ const initialBlogs = [
     __v: 0,
   },
 ];
+
 const dummy = (initialBlogs) => {
   return 1;
 };
