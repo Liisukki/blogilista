@@ -44,7 +44,7 @@ blogsRouter.post("/", async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0, // Jos likes puuttuu, oletusarvo 0
-    user: user._id, // Määritetään blogin käyttäjä tokenin perusteella
+    user: user._id, 
   });
 
   try {
