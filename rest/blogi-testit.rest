@@ -15,6 +15,18 @@ Content-Type: application/json
   "likes": 13,
   "userId": "67713dd016637cb0f45ff2a7"
 }
+
+### Muokkaa blogia
+PUT http://localhost:3003/api/blogs/6785586a4738f25753fa95d2
+Content-Type: application/json
+
+{
+  "title": "Blog",
+  "author": "Name",
+  "url": "http://example.com",
+  "likes": 45,
+  "userId": "67769e0b163e80fba0a283fa"
+}
 ### Käyttäjän lisääminen
 POST http://localhost:3003/api/users
 Content-Type: application/json
