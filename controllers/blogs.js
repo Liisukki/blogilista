@@ -61,8 +61,34 @@ blogsRouter.post("/", async (request, response) => {
   }
 });
 
-// Poista blogi
 blogsRouter.delete("/:id", async (request, response) => {
+  // Tarkistetaan, että token on mukana
+  const token = request.token; // Tämä tulee tokenExtractor-middlewaresta
+  if (!token) {
+    return response.status(401).json({ error: "Token missing" });
+  }
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.SECRET);
+  } catch (error) {
+    return response.status(401).json({ error: "Token invalid" });
+  }
+
+  // Hae blogi tietokannasta
+  const blog = await Blog.findById(request.params.id);
+  if (!blog) {
+    return response.status(404).json({ error: "Blog not found" });
+  }
+
+  // Tarkistetaan, että blogin lisääjä ja tokenin omistaja ovat samat
+  if (blog.user.toString() !== decodedToken.id.toString()) {
+    return response
+      .status(403)
+      .json({ error: "Unauthorized to delete this blog" });
+  }
+
+  // Poista blogi
   await Blog.findByIdAndDelete(request.params.id);
   response.status(204).end();
 });

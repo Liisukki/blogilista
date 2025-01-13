@@ -20,10 +20,11 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-  "username": "Saukko",
-  "name": "Anne Henriikka",
+  "name": "Paul",
+  "username": "paul",
   "password": "salainen"
 }
+
 
 ### Kirjautuminen
 POST http://localhost:3003/api/login
