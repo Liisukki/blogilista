@@ -3,15 +3,6 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
-// Tokenin hakeminen requestin headeristä
-const getTokenFrom = (request) => {
-  const authorization = request.get("authorization");
-  if (authorization && authorization.startsWith("Bearer ")) {
-    return authorization.replace("Bearer ", "");
-  }
-  return null;
-};
-
 // Hae kaikki blogit
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
@@ -22,10 +13,20 @@ blogsRouter.get("/", async (request, response) => {
 blogsRouter.post("/", async (request, response) => {
   const body = request.body;
 
-  // Tokenin dekoodaus
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
+  // Tokenin dekoodaus ja validointi
+  if (!request.token) {
+    return response.status(401).json({ error: "Token missing" });
+  }
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(request.token, process.env.SECRET);
+  } catch (error) {
+    return response.status(401).json({ error: "Token invalid" });
+  }
+
   if (!decodedToken.id) {
-    return response.status(401).json({ error: "token invalid" });
+    return response.status(401).json({ error: "Token missing or invalid" });
   }
 
   // Tarkistetaan, että tarvittavat kentät ovat olemassa
@@ -44,7 +45,7 @@ blogsRouter.post("/", async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0, // Jos likes puuttuu, oletusarvo 0
-    user: user._id, 
+    user: user._id, // Määritetään blogin käyttäjä tokenin perusteella
   });
 
   try {

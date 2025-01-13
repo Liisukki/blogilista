@@ -25,7 +25,7 @@ const errorHandler = (error, request, response, next) => {
   ) {
     return response
       .status(400)
-      .json({ error: "expected `username` to be unique" });
+      .json({ error: "expected username to be unique" });
   } else if (error.name === "JsonWebTokenError") {
     return response.status(400).json({ error: "token missing or invalid" });
   } else if (error.name === "TokenExpiredError") {
@@ -37,8 +37,21 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 };
 
+// Middleware, joka ottaa tokenin headerista ja lisää sen request-objektiin
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    request.token = authorization.replace("Bearer ", "");
+  } else {
+    request.token = null;
+  }
+  console.log("Extracted token:", request.token); // Debug-tulostus
+  next();
+};
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
+  tokenExtractor,
 };

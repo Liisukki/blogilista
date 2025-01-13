@@ -10,12 +10,12 @@ Content-Type: application/json
 ### Blogin lisääminen
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY3NzEzZGQwMTY2MzdjYjBmNDVmZjJhNSIsImlhdCI6MTczNTQ3ODg0Mn0.KAy65RZ9tmWPYdoU0w53wvRrpzwW7uQzzuh2EGdIe-I
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY3NzY5ZTBiMTYzZTgwZmJhMGEyODNmYSIsImlhdCI6MTczNjc5MTU4MSwiZXhwIjoxNzM2Nzk1MTgxfQ.hx_d5loP6mAMntQgNS2lkvJd6jWRrMGfNq8sEzuh8qM
 
 {
   "title": "Blog2",
   "author": "Name2",
   "url": "http://example.com",
   "likes": 132,
-  "userId": "67713dd016637cb0f45ff2a5"
+  "userId": "67769e0b163e80fba0a283fa"
 }
